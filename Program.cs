@@ -25,13 +25,32 @@ class Program
         // Array of test dataset sizes ranging from 100 up to 1,000,000 rows
         int[] testSizes = { 100, 1000, 10000, 100000, 500000, 1000000 };
 
-        Console.WriteLine("==================================================================================================================================================");
-        Console.WriteLine(" AUTOMATED BENCHMARK: Time & Memory Usage Verification");
-        Console.WriteLine("==================================================================================================================================================");
+        // Data format template (right-aligned for numbers)
+        string dataTemplate = "{0,-10} | {1,21} | {2,14} | {3,21} | {4,16} | {5,21} | {6,14} | {7,21} | {8,14} | {9,-8}";
 
-        // Updated header with Memory column for each approach
-        Console.WriteLine($"{"Rows",-10} | {"2D Time (s)",21} | {"2D Mem (MB)",14} | {"Jagged Time (s)",21} | {"Jagged Mem (MB)",16} | {"Fast Time (s)",21} | {"Fast Mem (MB)",14} | {"LINQ Time (s)",17} | {"LINQ Mem (MB)",14}");
-        Console.WriteLine(new string('-', 168));
+        // Centered headers matching exact column widths for flawless optical alignment
+        string hRows = CenterString("Rows", 10);
+        string h2DTime = CenterString("2D QSort (s)", 21);
+        string h2DMem = CenterString("2D Mem (KB)", 14);
+        string hJagTime = CenterString("Jagged QSort (s)", 21);
+        string hJagMem = CenterString("Jagged Mem (KB)", 16);
+        string hFastTime = CenterString("FastSort (s)", 21);
+        string hFastMem = CenterString("Fast Mem (KB)", 14);
+        string hLinqTime = CenterString("LINQ (s)", 21);
+        string hLinqMem = CenterString("LINQ Mem (KB)", 14);
+        string hVerified = CenterString("Verified", 8);
+
+        string headerLine = $"{hRows} | {h2DTime} | {h2DMem} | {hJagTime} | {hJagMem} | {hFastTime} | {hFastMem} | {hLinqTime} | {hLinqMem} | {hVerified}";
+
+        // Dynamically compute total width based on header length with a small extension for symmetry
+        int totalWidth = headerLine.Length + 1;
+
+        Console.WriteLine(new string('=', totalWidth));
+        Console.WriteLine(" AUTOMATED BENCHMARK: Execution Time, Heap Memory Usage (KB) & Strict Value Order Verification");
+        Console.WriteLine(new string('=', totalWidth));
+
+        Console.WriteLine(headerLine);
+        Console.WriteLine(new string('-', totalWidth));
 
         // Master stopwatch to measure total benchmark execution time
         Stopwatch totalBenchmarkClock = Stopwatch.StartNew();
@@ -50,6 +69,7 @@ class Program
             List<double> memLinq = new List<double>();
 
             Stopwatch clock = new Stopwatch();
+            bool sizeVerificationPassed = true;
 
             // Run 10 iterations per size to gather robust performance metrics
             for (int i = 0; i < 10; i++)
@@ -68,7 +88,7 @@ class Program
 
                 long memAfter2D = GC.GetAllocatedBytesForCurrentThread();
                 times2D.Add(clock.Elapsed.TotalSeconds);
-                mem2D.Add((memAfter2D - memBefore2D) / (1024.0 * 1024.0)); // Convert bytes to MB
+                mem2D.Add((memAfter2D - memBefore2D) / 1024.0); // Convert bytes to KB
 
                 // --- 2. Test for Jagged Array QuickSort (T[][]) ---
                 string[][] jaggedTable = CopyListToJaggedArray(randomList);
@@ -82,7 +102,7 @@ class Program
 
                 long memAfterJagged = GC.GetAllocatedBytesForCurrentThread();
                 timesJagged.Add(clock.Elapsed.TotalSeconds);
-                memJagged.Add((memAfterJagged - memBeforeJagged) / (1024.0 * 1024.0));
+                memJagged.Add((memAfterJagged - memBeforeJagged) / 1024.0); // Convert bytes to KB
 
                 // --- 3. Test for FastSort (.NET IntroSort + Zero-Allocation Struct Comparer) ---
                 string[][] jaggedTableFast = CopyListToJaggedArray(randomList);
@@ -96,7 +116,7 @@ class Program
 
                 long memAfterFast = GC.GetAllocatedBytesForCurrentThread();
                 timesFast.Add(clock.Elapsed.TotalSeconds);
-                memFast.Add((memAfterFast - memBeforeFast) / (1024.0 * 1024.0));
+                memFast.Add((memAfterFast - memBeforeFast) / 1024.0); // Convert bytes to KB
 
                 // --- 4. Test for Standard LINQ pipeline ---
                 GC.Collect();
@@ -119,29 +139,37 @@ class Program
 
                 long memAfterLinq = GC.GetAllocatedBytesForCurrentThread();
                 timesLinq.Add(clock.Elapsed.TotalSeconds);
-                memLinq.Add((memAfterLinq - memBeforeLinq) / (1024.0 * 1024.0));
+                memLinq.Add((memAfterLinq - memBeforeLinq) / 1024.0); // Convert bytes to KB
 
-                // Full Correctness check: executed on EVERY iteration to ensure absolute data integrity
+                // Full Correctness check: executed on EVERY iteration to ensure absolute data integrity without exceptions
                 bool isEqual2D = true;
                 bool isEqualJagged = true;
                 bool isEqualFast = true;
 
-                for (int j = 0; j < sortedTable.Count; j++)
+                try
                 {
-                    for (int k = 0; k < columns; k++)
+                    for (int j = 0; j < sortedTable.Count; j++)
                     {
-                        if (sortedTable[j][k] != randomTable[j, k])
-                            isEqual2D = false;
-                        if (sortedTable[j][k] != jaggedTable[j][k])
-                            isEqualJagged = false;
-                        if (sortedTable[j][k] != jaggedTableFast[j][k])
-                            isEqualFast = false;
+                        for (int k = 0; k < columns; k++)
+                        {
+                            if (sortedTable[j][k] != randomTable[j, k])
+                                isEqual2D = false;
+                            if (sortedTable[j][k] != jaggedTable[j][k])
+                                isEqualJagged = false;
+                            if (sortedTable[j][k] != jaggedTableFast[j][k])
+                                isEqualFast = false;
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    sizeVerificationPassed = false;
+                    Console.WriteLine($"\n[EXCEPTION] Error during value verification at {rows} rows: {ex.Message}");
                 }
 
                 if (!isEqual2D || !isEqualJagged || !isEqualFast)
                 {
-                    Console.WriteLine($"\n[ERROR] Data mismatch detected at {rows} rows on iteration {i + 1}!");
+                    sizeVerificationPassed = false;
                 }
             }
 
@@ -156,17 +184,40 @@ class Program
             double avgMemFast = CalculateTrimmedAverage(memFast);
             double avgMemLinq = CalculateTrimmedAverage(memLinq);
 
-            // Print formatted results row with 15 decimals for time and 2 decimals for memory (MB)
-            Console.WriteLine($"{rows,-10} | {avgTime2D,21:F15} s | {avgMem2D,11:F2} MB | {avgTimeJagged,21:F15} s | {avgMemJagged,13:F2} MB | {avgTimeFast,21:F15} s | {avgMemFast,11:F2} MB | {avgTimeLinq,17:F15} s | {avgMemLinq,11:F2} MB");
+            string verificationStatus = sizeVerificationPassed ? "OK" : "FAIL";
+
+            // Print formatted data row using the exact data template
+            Console.WriteLine(string.Format(dataTemplate,
+                rows,
+                avgTime2D.ToString("F13") + " s",
+                avgMem2D.ToString("F2") + " KB",
+                avgTimeJagged.ToString("F13") + " s",
+                avgMemJagged.ToString("F2") + " KB",
+                avgTimeFast.ToString("F13") + " s",
+                avgMemFast.ToString("F2") + " KB",
+                avgTimeLinq.ToString("F13") + " s",
+                avgMemLinq.ToString("F2") + " KB",
+                verificationStatus));
         }
 
         totalBenchmarkClock.Stop();
 
-        Console.WriteLine("==================================================================================================================================================");
+        Console.WriteLine(new string('=', totalWidth));
         Console.WriteLine($" TOTAL BENCHMARK EXECUTION TIME: {totalBenchmarkClock.Elapsed.TotalSeconds:F4} seconds");
-        Console.WriteLine("==================================================================================================================================================");
-        Console.WriteLine("Benchmark and memory tracking completed successfully. Press any key to exit.");
+        Console.WriteLine(new string('=', totalWidth));
+        Console.WriteLine("Benchmark, memory tracking and value verifications completed successfully. Press any key to exit.");
         Console.ReadKey();
+    }
+
+    // Helper method to center header text within a specific column width
+    private static string CenterString(string text, int width)
+    {
+        if (text.Length >= width)
+            return text.Substring(0, width);
+
+        int leftPadding = (width - text.Length) / 2;
+        int rightPadding = width - text.Length - leftPadding;
+        return new string(' ', leftPadding) + text + new string(' ', rightPadding);
     }
 
     // Helper method to discard min and max values and calculate the average of the remaining 8 measurements
