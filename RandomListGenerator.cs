@@ -16,7 +16,7 @@ namespace Sort
                 var row = new List<string>();
                 for (int j = 0; j < columns; j++)
                 {
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new StringBuilder(1024);
                     for (int k = 0; k < 1024; k++)
                     {
                         sb.Append(chars[random.Next(chars.Length)]);
