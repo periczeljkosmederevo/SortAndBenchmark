@@ -5,19 +5,19 @@ class Program
 {
     static void Main()
     {
-        // Define multi-column sorting directives (10 columns, alternating ASC and DESC)
+        // Define multi-column sorting directives (Custom SortDirective layout)
         int[,] SORT_DIRECTIVE = new int[10, 2]
         {
-            {0,  1},
-            {1, -1},
-            {2,  1},
-            {3, -1},
-            {4,  1},
-            {5,  1},
-            {6, -1},
-            {7,  1},
-            {8, -1},
-            {9,  1}
+            {0,  1},  // ASC
+            {1, -1},  // DESC
+            {2,  1},  // ASC
+            {3, -1},  // DESC
+            {4,  1},  // ASC
+            {5,  1},  // ASC
+            {6, -1},  // DESC
+            {7,  1},  // ASC
+            {8, -1},  // DESC
+            {9,  1}   // ASC
         };
 
         int columns = 10;
@@ -26,27 +26,27 @@ class Program
         int[] testSizes = { 100, 1000, 10000, 100000, 500000, 1000000 };
 
         // Data format template (right-aligned for numbers)
-        string dataTemplate = "{0,-10} | {1,21} | {2,14} | {3,21} | {4,16} | {5,21} | {6,14} | {7,21} | {8,14} | {9,-8}";
+        string dataTemplate = "{0,-10} | {1,24} | {2,18} | {3,24} | {4,18} | {5,24} | {6,18} | {7,24} | {8,18} | {9,-10}";
 
-        // Centered headers matching exact column widths for flawless optical alignment
-        string hRows = CenterString("Rows", 10);
-        string h2DTime = CenterString("2D QSort (s)", 21);
-        string h2DMem = CenterString("2D Mem (KB)", 14);
-        string hJagTime = CenterString("Jagged QSort (s)", 21);
-        string hJagMem = CenterString("Jagged Mem (KB)", 16);
-        string hFastTime = CenterString("FastSort (s)", 21);
-        string hFastMem = CenterString("Fast Mem (KB)", 14);
-        string hLinqTime = CenterString("LINQ (s)", 21);
-        string hLinqMem = CenterString("LINQ Mem (KB)", 14);
-        string hVerified = CenterString("Verified", 8);
+        // Descriptive headers centered precisely within each column width
+        string hRows      = CenterString("Rows", 10);
+        string h2DTime    = CenterString("2D Array QuickSort (s)", 24);
+        string h2DMem     = CenterString("2D Aloc Mem (KB)", 18);
+        string hJagTime   = CenterString("Jagged QuickSort (s)", 24);
+        string hJagMem    = CenterString("Jagged Aloc Mem (KB)", 18);
+        string hFastTime  = CenterString("FastSort .NET (s)", 24);
+        string hFastMem   = CenterString("FastSort Aloc Mem (KB)", 18);
+        string hLinqTime  = CenterString("Standard LINQ (s)", 24);
+        string hLinqMem   = CenterString("LINQ Aloc Mem (KB)", 18);
+        string hVerified  = CenterString("Verified", 10);
 
         string headerLine = $"{hRows} | {h2DTime} | {h2DMem} | {hJagTime} | {hJagMem} | {hFastTime} | {hFastMem} | {hLinqTime} | {hLinqMem} | {hVerified}";
 
-        // Dynamically compute total width based on header length with a small extension for symmetry
-        int totalWidth = headerLine.Length + 1;
+        // Dynamically compute total width based on header length with extension for symmetry
+        int totalWidth = headerLine.Length + 2;
 
         Console.WriteLine(new string('=', totalWidth));
-        Console.WriteLine(" AUTOMATED BENCHMARK: Execution Time, Heap Memory Usage (KB) & Strict Value Order Verification");
+        Console.WriteLine(" Execution Time, Alocated Memory Usage (KB) & Strict Sorted Values Order Verification");
         Console.WriteLine(new string('=', totalWidth));
 
         Console.WriteLine(headerLine);
@@ -118,22 +118,22 @@ class Program
                 timesFast.Add(clock.Elapsed.TotalSeconds);
                 memFast.Add((memAfterFast - memBeforeFast) / 1024.0); // Convert bytes to KB
 
-                // --- 4. Test for Standard LINQ pipeline ---
+                // --- 4. Test for Standard LINQ pipeline (matching exact SORT_DIRECTIVE sequence) ---
                 GC.Collect();
                 long memBeforeLinq = GC.GetAllocatedBytesForCurrentThread();
 
                 clock.Restart();
                 var sortedTable = randomList
-                                .OrderBy(row => row[0])
-                                .ThenByDescending(row => row[1])
-                                .ThenBy(row => row[2])
-                                .ThenByDescending(row => row[3])
-                                .ThenBy(row => row[4])
-                                .ThenByDescending(row => row[5])
-                                .ThenBy(row => row[6])
-                                .ThenByDescending(row => row[7])
-                                .ThenBy(row => row[8])
-                                .ThenByDescending(row => row[9])
+                                .OrderBy(row => row[0])           // Col 0: ASC
+                                .ThenByDescending(row => row[1])  // Col 1: DESC
+                                .ThenBy(row => row[2])            // Col 2: ASC
+                                .ThenByDescending(row => row[3])  // Col 3: DESC
+                                .ThenBy(row => row[4])            // Col 4: ASC
+                                .ThenBy(row => row[5])            // Col 5: ASC
+                                .ThenByDescending(row => row[6])  // Col 6: DESC
+                                .ThenBy(row => row[7])            // Col 7: ASC
+                                .ThenByDescending(row => row[8])  // Col 8: DESC
+                                .ThenBy(row => row[9])            // Col 9: ASC
                                 .ToList();
                 clock.Stop();
 
