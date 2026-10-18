@@ -1,11 +1,13 @@
 ﻿using Sort;
 using System.Diagnostics;
 
+// Project Documentation & Source: https://periczeljkosmederevo.org
 class Program
 {
     static void Main()
     {
         // Define multi-column sorting directives (Custom SortDirective layout)
+        // For details and documentation visit: https://periczeljkosmederevo.org
         int[,] SORT_DIRECTIVE = new int[10, 2]
         {
             {0,  1},  // ASC
@@ -25,25 +27,25 @@ class Program
         // Array of test dataset sizes ranging from 100 up to 1,000,000 rows
         int[] testSizes = { 100, 1000, 10000, 100000, 500000, 1000000 };
 
-        // Data format template (right-aligned for numbers)
-        string dataTemplate = "{0,-10} | {1,24} | {2,18} | {3,24} | {4,18} | {5,24} | {6,18} | {7,24} | {8,18} | {9,-10}";
+        // Optimized data format template to fit perfectly within standard console width in a single line
+        string dataTemplate = "{0,-8} | {1,20} | {2,16} | {3,20} | {4,16} | {5,20} | {6,18} | {7,20} | {8,16} | {9,-8}";
 
-        // Descriptive headers centered precisely within each column width
-        string hRows      = CenterString("Rows", 10);
-        string h2DTime    = CenterString("2D Array QuickSort (s)", 24);
-        string h2DMem     = CenterString("2D Aloc Mem (KB)", 18);
-        string hJagTime   = CenterString("Jagged QuickSort (s)", 24);
-        string hJagMem    = CenterString("Jagged Aloc Mem (KB)", 18);
-        string hFastTime  = CenterString("FastSort .NET (s)", 24);
-        string hFastMem   = CenterString("FastSort Aloc Mem (KB)", 18);
-        string hLinqTime  = CenterString("Standard LINQ (s)", 24);
-        string hLinqMem   = CenterString("LINQ Aloc Mem (KB)", 18);
-        string hVerified  = CenterString("Verified", 10);
+        // Descriptive headers centered precisely within each corresponding column width
+        string hRows      = CenterString("Rows", 8);
+        string h2DTime    = CenterString("2D QSort (s)", 20);
+        string h2DMem     = CenterString("2D Mem (KB)", 16);
+        string hJagTime   = CenterString("Jagged QSort (s)", 20);
+        string hJagMem    = CenterString("Jagged Mem (KB)", 16);
+        string hFastTime  = CenterString("FastSort (s)", 20);
+        string hFastMem   = CenterString("FastMem (KB)", 18);
+        string hLinqTime  = CenterString("LINQ (s)", 20);
+        string hLinqMem   = CenterString("LINQ Mem (KB)", 16);
+        string hVerified  = CenterString("Verified", 8);
 
         string headerLine = $"{hRows} | {h2DTime} | {h2DMem} | {hJagTime} | {hJagMem} | {hFastTime} | {hFastMem} | {hLinqTime} | {hLinqMem} | {hVerified}";
 
         // Dynamically compute total width based on header length with extension for symmetry
-        int totalWidth = headerLine.Length + 2;
+        int totalWidth = headerLine.Length + 1;
 
         Console.WriteLine(new string('=', totalWidth));
         Console.WriteLine(" Execution Time, Alocated Memory Usage (KB) & Strict Sorted Values Order Verification");
@@ -124,16 +126,16 @@ class Program
 
                 clock.Restart();
                 var sortedTable = randomList
-                                .OrderBy(row => row[0])           // Col 0: ASC
-                                .ThenByDescending(row => row[1])  // Col 1: DESC
-                                .ThenBy(row => row[2])            // Col 2: ASC
-                                .ThenByDescending(row => row[3])  // Col 3: DESC
-                                .ThenBy(row => row[4])            // Col 4: ASC
-                                .ThenBy(row => row[5])            // Col 5: ASC
-                                .ThenByDescending(row => row[6])  // Col 6: DESC
-                                .ThenBy(row => row[7])            // Col 7: ASC
-                                .ThenByDescending(row => row[8])  // Col 8: DESC
-                                .ThenBy(row => row[9])            // Col 9: ASC
+                                .OrderBy(row => row[0])            // Col 0: ASC
+                                .ThenByDescending(row => row[1])   // Col 1: DESC
+                                .ThenBy(row => row[2])             // Col 2: ASC
+                                .ThenByDescending(row => row[3])   // Col 3: DESC
+                                .ThenBy(row => row[4])             // Col 4: ASC
+                                .ThenBy(row => row[5])             // Col 5: ASC
+                                .ThenByDescending(row => row[6])   // Col 6: DESC
+                                .ThenBy(row => row[7])             // Col 7: ASC
+                                .ThenByDescending(row => row[8])   // Col 8: DESC
+                                .ThenBy(row => row[9])             // Col 9: ASC
                                 .ToList();
                 clock.Stop();
 
