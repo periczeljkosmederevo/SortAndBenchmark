@@ -1,13 +1,11 @@
 ﻿using Sort;
 using System.Diagnostics;
 
-// Project Documentation & Source: https://periczeljkosmederevo.org
 class Program
 {
     static void Main()
     {
         // Define multi-column sorting directives (Custom SortDirective layout)
-        // For details and documentation visit: https://periczeljkosmederevo.org
         int[,] SORT_DIRECTIVE = new int[10, 2]
         {
             {0,  1},  // ASC
@@ -48,7 +46,7 @@ class Program
         int totalWidth = headerLine.Length + 1;
 
         Console.WriteLine(new string('=', totalWidth));
-        Console.WriteLine(" Execution Time, Alocated Memory Usage (KB) & Strict Sorted Values Order Verification");
+        Console.WriteLine(" AUTOMATED BENCHMARK TEST: Execution Time, Alocated Memory Usage (KB) & Strict Sorted Values Order Verification");
         Console.WriteLine(new string('=', totalWidth));
 
         Console.WriteLine(headerLine);
