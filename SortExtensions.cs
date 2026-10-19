@@ -1,5 +1,27 @@
-﻿namespace Sort
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+namespace Sort
 {
+    /// <summary>
+    /// Specifies the direction of a sort operation.
+    /// </summary>
+    public enum SortOrder
+    {
+        Ascending,
+        Descending
+    }
+
+    /// <summary>
+    /// Represents a single sorting rule defining the target column index and sort order.
+    /// </summary>
+    public readonly struct SortDirective(int column, SortOrder order)
+    {
+        public int Column { get; } = column;
+        public SortOrder Order { get; } = order;
+    }
+
     /// <summary>
     /// Provides high-performance extension methods for sorting multi-dimensional (2D) 
     /// and jagged arrays using advanced sorting algorithms and custom multi-column directives.
@@ -12,32 +34,15 @@
         /// Sorts a jagged array using the .NET IntroSort algorithm paired with a zero-allocation 
         /// struct comparer. This method provides maximum performance.
         /// </summary>
-        /// <typeparam name="T">The type of elements in the array, must implement IComparable.</typeparam>
+        /// <typeparam name="T">The type of elements in the array, must implement IComparable{T}.</typeparam>
         /// <param name="array">The jagged array of rows to be sorted.</param>
-        /// <param name="sort_directive">A 2D integer array specifying column indices and sort orders 
-        /// (1 for ascending, -1 for descending).</param>
-        public static void FastSortArray<T>(this T[][] array, int[,] sort_directive)
+        /// <param name="directives">The sorting directives specifying column indices and sort orders.</param>
+        public static void FastSortArray<T>(this T[][] array, params SortDirective[] directives)
             where T : IComparable<T>
         {
-            // Guard clause: Exit early if the array is null or has 1 or fewer rows
-            if (array == null || array.Length <= 1)
+            // Guard clause: Exit early if the array is null, has 1 or fewer rows, or no directives
+            if (array == null || array.Length <= 1 || directives == null || directives.Length == 0)
                 return;
-
-            // Extract the number of sorting rules from the 2D directive array
-            int dirCount = sort_directive.GetLength(0);
-
-            // Allocate a 1D struct array for directives to maximize CPU cache locality
-            var directives = new SortDirective[dirCount];
-
-            // Populate the 1D struct array from the 2D configuration matrix
-            for (int i = 0; i < dirCount; i++)
-            {
-                directives[i] = new SortDirective
-                {
-                    Column = sort_directive[i, 0], // Target column index
-                    Order = sort_directive[i, 1]   // Sort direction (1 = ASC, -1 = DESC)
-                };
-            }
 
             // Invoke optimized .NET Array.Sort (IntroSort) with a zero-allocation struct comparer
             Array.Sort(array, new JaggedRowComparer<T>(directives));
@@ -53,27 +58,13 @@
         /// </summary>
         /// <typeparam name="T">The type of elements in the array.</typeparam>
         /// <param name="array">The jagged array to sort.</param>
-        /// <param name="sort_directive">The sorting rules specifying column index and order.</param>
-        public static void QuickSortArray<T>(this T[][] array, int[,] sort_directive)
+        /// <param name="directives">The sorting rules specifying column index and order.</param>
+        public static void QuickSortArray<T>(this T[][] array, params SortDirective[] directives)
             where T : IComparable<T>
         {
-            // Exit if the array is empty or contains a single row
-            if (array == null || array.Length <= 1)
+            // Exit if the array is empty, has a single row, or no directives
+            if (array == null || array.Length <= 1 || directives == null || directives.Length == 0)
                 return;
-
-            // Get total number of sorting rules
-            int dirCount = sort_directive.GetLength(0);
-
-            // Convert 2D rule matrix into a fast 1D struct array
-            var directives = new SortDirective[dirCount];
-            for (int i = 0; i < dirCount; i++)
-            {
-                directives[i] = new SortDirective
-                {
-                    Column = sort_directive[i, 0],
-                    Order = sort_directive[i, 1]
-                };
-            }
 
             // Start the recursive QuickSort partitioning process for jagged arrays
             QuickSortJagged(array, directives, 0, array.Length - 1);
@@ -120,14 +111,16 @@
         }
 
         // Evaluates multi-column sorting precedence between a row and the pivot
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsBeforeJagged<T>(T[] row, T[] pivot, SortDirective[] directives)
             where T : IComparable<T>
         {
             // Iterate through each sorting directive sequentially (primary, secondary, etc.)
             for (int i = 0; i < directives.Length; i++)
             {
-                int col = directives[i].Column;
-                int order = directives[i].Order;
+                ref readonly var directive = ref directives[i];
+                int col = directive.Column;
+                SortOrder order = directive.Order;
 
                 // Compare individual cell values at the target column
                 int comparison = row[col].CompareTo(pivot[col]);
@@ -135,7 +128,7 @@
                 // If values are not equal, determine precedence based on sort order
                 if (comparison != 0)
                 {
-                    return order == 1 ? comparison < 0 : comparison > 0;
+                    return order == SortOrder.Ascending ? comparison < 0 : comparison > 0;
                 }
             }
             // If all columns are identical, keep original relative order
@@ -143,6 +136,7 @@
         }
 
         // Extremely fast row swapping via reference redirection (no cell copying)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void SwapJaggedRows<T>(T[][] array, int i, int j)
         {
             T[] temp = array[i];
@@ -159,33 +153,33 @@
         /// </summary>
         /// <typeparam name="T">The type of elements in the array.</typeparam>
         /// <param name="array">The 2D array to sort.</param>
-        /// <param name="sort_directive">The sorting directives.</param>
-        public static void QuickSortArray<T>(this T[,] array, int[,] sort_directive)
+        /// <param name="directives">The sorting directives.</param>
+        public static void QuickSortArray<T>(this T[,] array, params SortDirective[] directives)
             where T : IComparable<T>
         {
-            // Guard clause for 2D array row count
-            if (array == null || array.GetLength(0) <= 1)
+            // Guard clause for 2D array row count or directives
+            if (array == null || array.GetLength(0) <= 1 || directives == null || directives.Length == 0)
                 return;
 
             // Initiate recursive 2D QuickSort
-            QuickSort2D(array, sort_directive, 0, array.GetLength(0) - 1);
+            QuickSort2D(array, directives, 0, array.GetLength(0) - 1);
         }
 
         // Recursive helper for 2D array QuickSort
-        private static void QuickSort2D<T>(T[,] array, int[,] sort_directive, int low, int high)
+        private static void QuickSort2D<T>(T[,] array, SortDirective[] directives, int low, int high)
             where T : IComparable<T>
         {
             if (low < high)
             {
-                int pi = Partition2D(array, sort_directive, low, high);
+                int pi = Partition2D(array, directives, low, high);
 
-                QuickSort2D(array, sort_directive, low, pi - 1);
-                QuickSort2D(array, sort_directive, pi + 1, high);
+                QuickSort2D(array, directives, low, pi - 1);
+                QuickSort2D(array, directives, pi + 1, high);
             }
         }
 
         // Partitions a traditional 2D array by copying the pivot row into a temporary 1D buffer
-        private static int Partition2D<T>(T[,] array, int[,] sort_directive, int low, int high)
+        private static int Partition2D<T>(T[,] array, SortDirective[] directives, int low, int high)
             where T : IComparable<T>
         {
             int cols = array.GetLength(1);
@@ -201,7 +195,7 @@
 
             for (int j = low; j < high; j++)
             {
-                if (IsBefore2D(array, sort_directive, j, pivot))
+                if (IsBefore2D(array, directives, j, pivot))
                 {
                     i++;
                     SwapRows2D(array, i, j); // Physically swaps cells column by column
@@ -213,23 +207,25 @@
         }
 
         // Evaluates sorting precedence for 2D array elements
-        private static bool IsBefore2D<T>(T[,] array, int[,] sort_directive, int row, T[] pivot)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool IsBefore2D<T>(T[,] array, SortDirective[] directives, int row, T[] pivot)
             where T : IComparable<T>
         {
-            for (int i = 0; i < sort_directive.GetLength(0); i++)
+            for (int i = 0; i < directives.Length; i++)
             {
-                int column = sort_directive[i, 0];
-                int order = sort_directive[i, 1];
+                ref readonly var directive = ref directives[i];
+                int column = directive.Column;
+                SortOrder order = directive.Order;
 
                 int comparison = array[row, column].CompareTo(pivot[column]);
 
                 if (comparison != 0)
                 {
-                    if ((order == 1 && comparison > 0) || (order == -1 && comparison < 0))
+                    if ((order == SortOrder.Ascending && comparison > 0) || (order == SortOrder.Descending && comparison < 0))
                     {
                         return false;
                     }
-                    else if ((order == -1 && comparison > 0) || (order == 1 && comparison < 0))
+                    else if ((order == SortOrder.Descending && comparison > 0) || (order == SortOrder.Ascending && comparison < 0))
                     {
                         return true;
                     }
@@ -239,6 +235,7 @@
         }
 
         // Physically swaps all individual elements across columns for two rows in a 2D array
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void SwapRows2D<T>(T[,] array, int i, int j)
         {
             int cols = array.GetLength(1);
@@ -260,17 +257,17 @@
         /// </summary>
         /// <typeparam name="T">The type of elements in the array.</typeparam>
         /// <param name="array">The 2D array to sort.</param>
-        /// <param name="sort_directive">The sorting directives.</param>
-        public static void SelectionSortArray<T>(this T[,] array, int[,] sort_directive)
+        /// <param name="directives">The sorting directives.</param>
+        public static void SelectionSortArray<T>(this T[,] array, params SortDirective[] directives)
             where T : IComparable<T>
         {
             // Guard clause for null or single-row 2D arrays
-            if (array == null || array.GetLength(0) <= 1)
+            if (array == null || array.GetLength(0) <= 1 || directives == null || directives.Length == 0)
                 return;
 
             int arrayRows = array.GetLength(0);
             int arrayColumns = array.GetLength(1);
-            int sortDirectiveColumns = sort_directive.GetLength(0);
+            int sortDirectiveCount = directives.Length;
 
             // Selection sort outer loop
             for (int i = 0; i < arrayRows - 1; i++)
@@ -282,17 +279,18 @@
                 {
                     bool shouldSwap = false;
 
-                    for (int c = 0; c < sortDirectiveColumns; c++)
+                    for (int c = 0; c < sortDirectiveCount; c++)
                     {
-                        int columnToSort = sort_directive[c, 0];
-                        int sortOrder = sort_directive[c, 1];
+                        ref readonly var directive = ref directives[c];
+                        int columnToSort = directive.Column;
+                        SortOrder sortOrder = directive.Order;
 
                         T valueI = array[minIndex, columnToSort];
                         T valueJ = array[j, columnToSort];
 
                         int comparisonResult = valueI.CompareTo(valueJ);
 
-                        int compRule = sortOrder == -1 ? -comparisonResult : comparisonResult;
+                        int compRule = sortOrder == SortOrder.Descending ? -comparisonResult : comparisonResult;
                         if (compRule < 0)
                         {
                             shouldSwap = true;
@@ -328,30 +326,22 @@
         #region Shared Supporting Structures
 
         /// <summary>
-        /// Represents a single sorting rule defining the target column index and sort order.
-        /// </summary>
-        private struct SortDirective
-        {
-            public int Column;
-            public int Order;
-        }
-
-        /// <summary>
         /// A high-performance, zero-allocation struct-based comparer for jagged array rows.
         /// Enables JIT compiler devirtualization and inlining for maximum execution speed.
         /// </summary>
-        private struct JaggedRowComparer<T> : IComparer<T[]>
+        private readonly struct JaggedRowComparer<T> : IComparer<T[]>
             where T : IComparable<T>
         {
             private readonly SortDirective[] _directives;
 
-            // Constructor initializing the sort rules inside the struct
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public JaggedRowComparer(SortDirective[] directives)
             {
                 _directives = directives;
             }
 
             // Custom comparison logic executed millions of times during sorting
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public int Compare(T[] rowA, T[] rowB)
             {
                 // Handle null reference edge cases
@@ -362,18 +352,22 @@
                 if (rowB == null)
                     return 1;
 
+                var directives = _directives;
+                int length = directives.Length;
+
                 // Iterate through multi-column directives sequentially
-                for (int i = 0; i < _directives.Length; i++)
+                for (int i = 0; i < length; i++)
                 {
-                    int col = _directives[i].Column;
-                    int order = _directives[i].Order;
+                    ref readonly var directive = ref directives[i];
+                    int col = directive.Column;
+                    SortOrder order = directive.Order;
 
                     int comparison = rowA[col].CompareTo(rowB[col]);
 
                     // Return comparison outcome adjusted by sort direction
                     if (comparison != 0)
                     {
-                        return order == 1 ? comparison : -comparison;
+                        return order == SortOrder.Ascending ? comparison : -comparison;
                     }
                 }
                 return 0;
