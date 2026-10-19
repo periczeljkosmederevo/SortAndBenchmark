@@ -14,7 +14,8 @@
         /// </summary>
         /// <typeparam name="T">The type of elements in the array, must implement IComparable.</typeparam>
         /// <param name="array">The jagged array of rows to be sorted.</param>
-        /// <param name="sort_directive">A 2D integer array specifying column indices and sort orders (1 for ascending, -1 for descending).</param>
+        /// <param name="sort_directive">A 2D integer array specifying column indices and sort orders 
+        /// (1 for ascending, -1 for descending).</param>
         public static void FastSortArray<T>(this T[][] array, int[,] sort_directive)
             where T : IComparable<T>
         {
