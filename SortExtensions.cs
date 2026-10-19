@@ -135,13 +135,11 @@ namespace Sort
             return true;
         }
 
-        // Extremely fast row swapping via reference redirection (no cell copying)
+        // Extremely fast row swapping via tuple assignment (no cell copying)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void SwapJaggedRows<T>(T[][] array, int i, int j)
         {
-            T[] temp = array[i];
-            array[i] = array[j];
-            array[j] = temp;
+            (array[j], array[i]) = (array[i], array[j]);
         }
 
         #endregion
@@ -241,9 +239,7 @@ namespace Sort
             int cols = array.GetLength(1);
             for (int col = 0; col < cols; col++)
             {
-                T temp = array[i, col];
-                array[i, col] = array[j, col];
-                array[j, col] = temp;
+                (array[j, col], array[i, col]) = (array[i, col], array[j, col]);
             }
         }
 
@@ -313,9 +309,7 @@ namespace Sort
                 {
                     for (int d = 0; d < arrayColumns; d++)
                     {
-                        T temp = array[minIndex, d];
-                        array[minIndex, d] = array[i, d];
-                        array[i, d] = temp;
+                        (array[i, d], array[minIndex, d]) = (array[minIndex, d], array[i, d]);
                     }
                 }
             }
@@ -329,17 +323,9 @@ namespace Sort
         /// A high-performance, zero-allocation struct-based comparer for jagged array rows.
         /// Enables JIT compiler devirtualization and inlining for maximum execution speed.
         /// </summary>
-        private readonly struct JaggedRowComparer<T> : IComparer<T[]>
+        private readonly struct JaggedRowComparer<T>(SortDirective[] directives) : IComparer<T[]>
             where T : IComparable<T>
         {
-            private readonly SortDirective[] _directives;
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public JaggedRowComparer(SortDirective[] directives)
-            {
-                _directives = directives;
-            }
-
             // Custom comparison logic executed millions of times during sorting
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public int Compare(T[] rowA, T[] rowB)
@@ -352,7 +338,6 @@ namespace Sort
                 if (rowB == null)
                     return 1;
 
-                var directives = _directives;
                 int length = directives.Length;
 
                 // Iterate through multi-column directives sequentially

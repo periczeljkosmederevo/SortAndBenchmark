@@ -1,15 +1,13 @@
 ﻿using Sort;
 using System.Diagnostics;
-using System.Collections.Generic;
-using System.Linq;
 
 class Program
 {
     static void Main()
     {
         // Define multi-column sorting directives using the new SortDirective struct and SortOrder enum
-        SortDirective[] SORT_DIRECTIVE = new SortDirective[]
-        {
+        SortDirective[] SORT_DIRECTIVE =
+        [
             new SortDirective(0, SortOrder.Ascending),    // Col 0: ASC
             new SortDirective(1, SortOrder.Descending), // Col 1: DESC
             new SortDirective(2, SortOrder.Ascending),    // Col 2: ASC
@@ -20,7 +18,7 @@ class Program
             new SortDirective(7, SortOrder.Ascending),    // Col 7: ASC
             new SortDirective(8, SortOrder.Descending), // Col 8: DESC
             new SortDirective(9, SortOrder.Ascending)     // Col 9: ASC
-        };
+        ];
 
         int columns = 10;
 
