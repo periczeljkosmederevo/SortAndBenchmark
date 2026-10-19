@@ -24,6 +24,7 @@ class Program
 
         // Array of test dataset sizes ranging from 100 up to 1,000,000 rows
         int[] testSizes = [100, 1000, 10000, 100000, 500000, 1000000];
+        //int[] testSizes = [5000000];
 
         // Optimized data format template to fit perfectly within standard console width in a single line
         string dataTemplate = "{0,-8} | {1,20} | {2,16} | {3,20} | {4,16} | {5,20} | {6,18} | {7,20} | {8,16} | {9,-8}";
@@ -223,7 +224,14 @@ class Program
     // Helper method to discard min and max values and calculate the average of the remaining 8 measurements
     private static double CalculateTrimmedAverage(List<double> times)
     {
+        if (times.Count == 0)
+            return 0;
+
         times.Sort();
+
+        if (times.Count <= 2)
+            return times[0];
+
         double sum = 0;
         for (int i = 1; i < times.Count - 1; i++)
         {
