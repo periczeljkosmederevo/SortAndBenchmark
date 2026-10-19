@@ -1,8 +1,9 @@
-﻿namespace Sort
+﻿using System;
+
+namespace Sort
 {
     public class InitialTest
     {
-
         public void Initial()
         {
             Console.WriteLine("Hello, World!");
@@ -22,17 +23,13 @@
             //
             // Table SORT DIRECTIVE contains order of columns
             // by which array is going to be sorted and sort order
-            // for each selected column
+            // for each selected column using SortDirective and SortOrder enum
             //
-            //  0 - do not sort column
-            // -1 - sort in Descending order
-            //  1 - sort in Ascending order
-            //
-            int[,] SORT_DIRECTIVE = new int[3, 2]
+            SortDirective[] SORT_DIRECTIVE = new SortDirective[]
             {
-                {0, 1},
-                {1, -1},
-                {2, 1}
+                new SortDirective(0, SortOrder.Ascending),
+                new SortDirective(1, SortOrder.Descending),
+                new SortDirective(2, SortOrder.Ascending)
             };
 
             //
@@ -50,10 +47,9 @@
             //
 
             //
-            // Call sort method
+            // Call sort method (now utilizing the new SortDirective model)
             //
             TABLE.QuickSortArray(SORT_DIRECTIVE);
-
 
             //
             // Print sorted TABLE

@@ -1,23 +1,25 @@
 ﻿using Sort;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 
 class Program
 {
     static void Main()
     {
-        // Define multi-column sorting directives (Custom SortDirective layout)
-        int[,] SORT_DIRECTIVE = new int[10, 2]
+        // Define multi-column sorting directives using the new SortDirective struct and SortOrder enum
+        SortDirective[] SORT_DIRECTIVE = new SortDirective[]
         {
-            {0,  1},  // ASC
-            {1, -1},  // DESC
-            {2,  1},  // ASC
-            {3, -1},  // DESC
-            {4,  1},  // ASC
-            {5,  1},  // ASC
-            {6, -1},  // DESC
-            {7,  1},  // ASC
-            {8, -1},  // DESC
-            {9,  1}   // ASC
+            new SortDirective(0, SortOrder.Ascending),    // Col 0: ASC
+            new SortDirective(1, SortOrder.Descending), // Col 1: DESC
+            new SortDirective(2, SortOrder.Ascending),    // Col 2: ASC
+            new SortDirective(3, SortOrder.Descending), // Col 3: DESC
+            new SortDirective(4, SortOrder.Ascending),    // Col 4: ASC
+            new SortDirective(5, SortOrder.Ascending),    // Col 5: ASC
+            new SortDirective(6, SortOrder.Descending), // Col 6: DESC
+            new SortDirective(7, SortOrder.Ascending),    // Col 7: ASC
+            new SortDirective(8, SortOrder.Descending), // Col 8: DESC
+            new SortDirective(9, SortOrder.Ascending)     // Col 9: ASC
         };
 
         int columns = 10;
@@ -46,7 +48,7 @@ class Program
         int totalWidth = headerLine.Length + 1;
 
         Console.WriteLine(new string('=', totalWidth));
-        Console.WriteLine(" AUTOMATED BENCHMARK TEST: Execution Time, Alocated Memory Usage (KB) & Strict Sorted Values Order Verification");
+        Console.WriteLine(" AUTOMATED BENCHMARK TEST: Execution Time, Allocated Memory Usage (KB) & Strict Sorted Values Order Verification");
         Console.WriteLine(new string('=', totalWidth));
 
         Console.WriteLine(headerLine);

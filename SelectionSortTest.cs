@@ -1,10 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace Sort
 {
     public class SelectionSortTest
     {
-        public static void StartTest(int[,] SORT_DIRECTIVE, string[,] randomTable)
+        public static void StartTest(SortDirective[] SORT_DIRECTIVE, string[,] randomTable)
         {
             Stopwatch clock = new Stopwatch();
 
@@ -14,6 +15,7 @@ namespace Sort
 
             clock.Start();
 
+            // Calling SelectionSortArray with the new SortDirective array model
             randomTable.SelectionSortArray(SORT_DIRECTIVE);
 
             clock.Stop();

@@ -1,10 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace Sort
 {
     public class QuickSortTest
     {
-        public static void StartTest(int[,] SORT_DIRECTIVE, string[,] randomTable)
+        public static void StartTest(SortDirective[] SORT_DIRECTIVE, string[,] randomTable)
         {
             Stopwatch clock = new Stopwatch();
 
@@ -14,6 +15,7 @@ namespace Sort
 
             clock.Start();
 
+            // Calling QuickSortArray with the new SortDirective array model
             randomTable.QuickSortArray(SORT_DIRECTIVE);
 
             clock.Stop();
@@ -21,9 +23,9 @@ namespace Sort
             Console.Write(" Quick sort algorithm : ");
             Console.WriteLine(clock.Elapsed.TotalSeconds);
             Console.WriteLine();
-            //Console.Write(" Hit Any Key");
-            //Console.ReadKey(true);
-            //Console.WriteLine();
+            Console.Write(" Hit Any Key");
+            Console.ReadKey(true);
+            Console.WriteLine();
         }
     }
 }
