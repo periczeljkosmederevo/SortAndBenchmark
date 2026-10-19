@@ -23,7 +23,7 @@ class Program
         int columns = 10;
 
         // Array of test dataset sizes ranging from 100 up to 1,000,000 rows
-        int[] testSizes = { 100, 1000, 10000, 100000, 500000, 1000000 };
+        int[] testSizes = [100, 1000, 10000, 100000, 500000, 1000000];
 
         // Optimized data format template to fit perfectly within standard console width in a single line
         string dataTemplate = "{0,-8} | {1,20} | {2,16} | {3,20} | {4,16} | {5,20} | {6,18} | {7,20} | {8,16} | {9,-8}";
@@ -58,17 +58,17 @@ class Program
         // Iterate through each dataset size automatically
         foreach (int rows in testSizes)
         {
-            List<double> times2D = new List<double>();
-            List<double> timesJagged = new List<double>();
-            List<double> timesFast = new List<double>();
-            List<double> timesLinq = new List<double>();
+            List<double> times2D = [];
+            List<double> timesJagged = [];
+            List<double> timesFast = [];
+            List<double> timesLinq = [];
 
-            List<double> mem2D = new List<double>();
-            List<double> memJagged = new List<double>();
-            List<double> memFast = new List<double>();
-            List<double> memLinq = new List<double>();
+            List<double> mem2D = [];
+            List<double> memJagged = [];
+            List<double> memFast = [];
+            List<double> memLinq = [];
 
-            Stopwatch clock = new Stopwatch();
+            Stopwatch clock = new();
             bool sizeVerificationPassed = true;
 
             // Run 10 iterations per size to gather robust performance metrics
@@ -213,7 +213,7 @@ class Program
     private static string CenterString(string text, int width)
     {
         if (text.Length >= width)
-            return text.Substring(0, width);
+            return text[..width];
 
         int leftPadding = (width - text.Length) / 2;
         int rightPadding = width - text.Length - leftPadding;
@@ -255,7 +255,7 @@ class Program
 
         for (int i = 0; i < rows; i++)
         {
-            array[i] = list[i].ToArray();
+            array[i] = [.. list[i]];
         }
         return array;
     }

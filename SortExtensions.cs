@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace Sort
 {
@@ -328,7 +326,7 @@ namespace Sort
         {
             // Custom comparison logic executed millions of times during sorting
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public int Compare(T[] rowA, T[] rowB)
+            public int Compare(T[]? rowA, T[]? rowB)
             {
                 // Handle null reference edge cases
                 if (rowA == rowB)
