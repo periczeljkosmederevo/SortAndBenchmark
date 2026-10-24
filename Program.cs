@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Exporters;
-using BenchmarkDotNet.Exporters.Csv;
+using BenchmarkDotNet.Running;
 using SortBenchmarks;
 
 class Program
@@ -16,8 +15,6 @@ class Program
 
         // Configure BenchmarkDotNet to export results into multiple file formats
         var config = DefaultConfig.Instance
-            .AddExporter(CsvExporter.Default)       // Export results to CSV file
-            .AddExporter(HtmlExporter.Default)      // Export results to HTML file
             .AddExporter(MarkdownExporter.Default); // Export results to Markdown file
 
         // Run the benchmark suite with the specified configuration
@@ -25,6 +22,9 @@ class Program
 
         // Exit handling: keep console open until user presses a key
         Console.WriteLine("\nBenchmark execution finished successfully. Press any key to exit.");
+        Console.ReadKey();
+
+        Console.WriteLine("\nConfirm exiting console. Press any key to exit.");
         Console.ReadKey();
     }
 }
