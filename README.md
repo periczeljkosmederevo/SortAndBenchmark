@@ -48,30 +48,7 @@ Sort/
 
 ```
 
-## 🛠️ Core Features & Architecture
-
-1. **Multi-Column Sorting Directives (`SortDirective` & `SortOrder`)**:
-   * Define complex, hierarchical sorting rules across an arbitrary number of columns, supporting mixed ascending (`SortOrder.Ascending`) and descending (`SortOrder.Descending`) sequences.
-2. **High-Performance Sorting Strategies**:
-   * **Jagged QuickSort (`T[][]`)**: Swaps row reference pointers directly (`(array[j], array[i]) = (array[i], array[j])`) instead of copying individual cell elements.
-   * **FastSort (`T[][]`)**: Combines .NET's native optimized `Array.Sort` (IntroSort) with a **zero-allocation struct comparer** (`JaggedRowComparer<T>`), enabling JIT devirtualization and aggressive method inlining (`[MethodImpl(MethodImplOptions.AggressiveInlining)]`).
-   * **2D Array QuickSort (`T[,]`)**: Traditional in-place sorting adapted for multi-dimensional array structures.
-3. **Built-in Benchmark Suite**:
-   * Integrates **BenchmarkDotNet** to continuously measure, profile, and compare execution times and memory allocations against standard LINQ baselines across dataset scales from 100 up to 1,000,000 rows, each containing 10 columns of string data.
-
 ---
-
-## 📁 Project Structure
-
-```text
-    Sort/
-    │
-    ├── SortExtensions.cs         # Core library: SortOrder, SortDirective, and high-performance sorting extensions
-    ├── SortBenchmarks.cs         # BenchmarkDotNet profiling suite for performance regression testing
-    ├── RandomListGenerator.cs    # Controlled test dataset generator with duplicate management (ties)
-    ├── Program.cs                # Console entry point for executing benchmarks
-    └── README.md                 # Project documentation
-```
 
 ## 📊 Example Usage
 Integrating multi-column sorting into your own projects is straightforward using extension methods:
@@ -111,6 +88,8 @@ Integrating multi-column sorting into your own projects is straightforward using
     table2D.QuickSortArray(directives);
 ```
 
+---
+
 ## ⚙️ Running the Benchmarks
 To evaluate sorting performance and run memory diagnostics on your machine:
 
@@ -126,12 +105,16 @@ To evaluate sorting performance and run memory diagnostics on your machine:
 
 4. Run the application (Ctrl + F5). BenchmarkDotNet will execute warmup cycles, run statistical iterations, and output detailed performance summaries.
 
-🗺️ Roadmap & Future Extensions
+---
+
+## 🗺️ Roadmap & Future Extensions
 [ ] Integration of parallel sorting (Parallel.Sort) for massive multi-million row datasets.
 
 [ ] Support for span-based (ReadOnlySpan<T>) zero-copy sorting operations.
 
 [ ] Additional sorting algorithms for performance comparison benchmarks.
+
+---
 
 ## 📄 License
 This project is licensed under the [CC0-1.0 license (Public Domain)](https://creativecommons.org/publicdomain/zero/1.0/).
@@ -140,6 +123,8 @@ To the extent possible under law, the author(s) have dedicated all copyright and
 
 Feel free to use, modify, and distribute the code without any restrictions.
 
+---
+
 ## 📧 Support & Contact
 For technical inquiries, suggestions, or collaboration, please contact:
 
@@ -147,4 +132,4 @@ Name: Željko Perić
 
 Email: periczeljkosmederevo@yahoo.com
 
-
+---

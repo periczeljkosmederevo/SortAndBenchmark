@@ -13,7 +13,7 @@ namespace SortBenchmarks
     public class Benchmark
     {
         // Parameterized dataset row counts tested automatically by BenchmarkDotNet
-        [Params(100, 1000, 10000, 100000, 500000, 1000000)]
+        [Params(100)]//, 1000, 10000, 100000, 500000, 1000000)]
         public int Rows { get; set; }
 
         private const int Columns = 10;
