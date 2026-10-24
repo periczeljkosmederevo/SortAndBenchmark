@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using Sort;
 
 namespace SortBenchmarks
@@ -10,10 +11,11 @@ namespace SortBenchmarks
     /// </summary>
     [MemoryDiagnoser]
     [RankColumn]
+    [SimpleJob(RuntimeMoniker.Net10_0, launchCount: 1, warmupCount: 5, iterationCount: 100, invocationCount: 50)]
     public class Benchmark
     {
         // Parameterized dataset row counts tested automatically by BenchmarkDotNet
-        [Params(100, 1000, 10000, 100000)]//, 500000, 1000000)]
+        [Params(100)]//, 1000, 10000, 100000, 500000, 1000000)]
         public int Rows { get; set; }
 
         private const int Columns = 10;

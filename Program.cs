@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Exporters;
+using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using SortBenchmarks;
 
