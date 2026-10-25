@@ -10,9 +10,10 @@ class Program
         Console.WriteLine("======================================================================");
         Console.WriteLine("Initializing BenchmarkDotNet environment. Please wait...\n");
 
-        // Configure BenchmarkDotNet to export results into multiple file formats
+        // Configure BenchmarkDotNet with a custom artifacts path and markdown exporter
         var config = DefaultConfig.Instance
-            .AddExporter(MarkdownExporter.Default); // Export results to Markdown file
+            .WithArtifactsPath("./BenchmarkDotNet.Artifacts")
+            .AddExporter(MarkdownExporter.Default);
 
         // Run the benchmark suite with the specified configuration
         BenchmarkRunner.Run<Benchmark>(config);

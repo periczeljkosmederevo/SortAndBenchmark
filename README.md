@@ -35,6 +35,14 @@ actively structured for easy expansion with new sorting algorithms and data stru
 
 ---
 
+## 📊 Benchmark Results & Artifacts
+
+To save you the time and overhead of running heavy benchmark iterations locally across up to 1,000,000 rows, all generated reports, HTML tables, CSV files, and raw execution logs are fully preserved and tracked directly within the repository:
+- **Detailed Reports (HTML, CSV, and Markdown):** Located in the [BenchmarkDotNet.Artifacts/results](BenchmarkDotNet.Artifacts/results) folder[cite: 2].
+- **Execution & Diagnostic Logs:** Raw diagnostic logs are stored in the [BenchmarkDotNet.Artifacts](BenchmarkDotNet.Artifacts) directory[cite: 1].
+
+---
+
 ## 📁 Project Structure
 
 ```text
