@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Sort
+namespace SortAndBenchmark
 {
     public class RandomListGenerator
     {
