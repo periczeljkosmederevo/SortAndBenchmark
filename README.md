@@ -48,11 +48,12 @@ To save you the time and overhead of running heavy benchmark iterations locally 
 ```text
 Sort/
 │
-├── SortExtensions.cs         # Core extension methods: SortOrder, SortDirective, and high-performance algorithms
-├── SortBenchmarks.cs         # BenchmarkDotNet profiling suite for performance regression testing
-├── RandomListGenerator.cs    # Controlled test dataset generator with duplicate management (ties)
-├── Program.cs                # Console entry point launching the BenchmarkRunner
-└── README.md                 # Project documentation
+├── SortExtensions.cs                # Core extension methods: SortOrder, SortDirective, and high-performance algorithms
+├── Benchmark.cs                     # BenchmarkDotNet profiling suite for performance regression testing
+├── RandomListGenerator.cs           # Controlled test dataset generator with duplicate management (ties) & heavy payloads
+├── Program.cs                       # Console entry point launching the BenchmarkRunner with custom artifacts path
+├── BenchmarkDotNet.Artifacts/       # Preserved benchmark reports, HTML/CSV tables, and execution logs
+└── README.md                        # Project documentation
 
 ```
 
