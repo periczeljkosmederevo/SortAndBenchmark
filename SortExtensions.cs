@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace SortAndBenchmark
+﻿namespace SortAndBenchmark
 {
     /// <summary>
     /// Specifies the direction of a sort operation.

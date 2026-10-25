@@ -1,7 +1,4 @@
-﻿using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Exporters;
-using BenchmarkDotNet.Running;
-using SortAndBenchmark;
+﻿using SortAndBenchmark;
 
 class Program
 {

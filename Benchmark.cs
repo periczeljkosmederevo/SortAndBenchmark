@@ -1,6 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
-
-namespace SortAndBenchmark
+﻿namespace SortAndBenchmark
 {
     /// <summary>
     /// Comprehensive benchmarking suite designed to measure pure sorting performance 
