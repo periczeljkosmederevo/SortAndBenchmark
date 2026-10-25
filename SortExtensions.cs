@@ -86,7 +86,6 @@
         private static int PartitionJagged<T>(T[][] array, SortDirective[] directives, int low, int high)
             where T : IComparable<T>
         {
-            // Select the last row as the pivot reference
             T[] pivot = array[high];
             int i = low - 1; // Index of smaller element
 
