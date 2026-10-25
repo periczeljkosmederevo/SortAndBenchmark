@@ -5,7 +5,7 @@ using SortAndBenchmark;
 
 class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
         // Display startup console messages
         Console.WriteLine("======================================================================");
