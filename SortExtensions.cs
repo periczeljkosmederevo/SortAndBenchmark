@@ -1,4 +1,6 @@
-﻿namespace SortAndBenchmark
+﻿using System.Runtime.CompilerServices;
+
+namespace SortAndBenchmark
 {
     /// <summary>
     /// Specifies the sorting direction for individual columns (Ascending or Descending).
@@ -39,7 +41,7 @@
         /// <summary>
         /// Adds a primary sorting rule in ascending order (default LINQ-like behavior).
         /// </summary>
-        /// <param name="column">The zero-based index of the column.</param>
+        /// <param name="column">The zero-based index of the column to sort by.</param>
         /// <returns>The current builder instance to allow fluent method chaining.</returns>
         public SortBuilder<T> OrderBy(int column)
         {
@@ -48,9 +50,9 @@
         }
 
         /// <summary>
-        /// Adds a primary sorting rule in ascending order (default LINQ-like behavior).
+        /// Adds a secondary or subsequent sorting rule in ascending order (LINQ-like ThenBy behavior).
         /// </summary>
-        /// <param name="column">The zero-based index of the column.</param>
+        /// <param name="column">The zero-based index of the column to sort by.</param>
         /// <returns>The current builder instance to allow fluent method chaining.</returns>
         public SortBuilder<T> ThenBy(int column)
         {
@@ -61,7 +63,7 @@
         /// <summary>
         /// Adds a primary sorting rule in explicit ascending order.
         /// </summary>
-        /// <param name="column">The zero-based index of the column.</param>
+        /// <param name="column">The zero-based index of the column to sort by.</param>
         /// <returns>The current builder instance to allow fluent method chaining.</returns>
         public SortBuilder<T> OrderByAscending(int column)
         {
@@ -72,7 +74,7 @@
         /// <summary>
         /// Adds a primary sorting rule in explicit descending order.
         /// </summary>
-        /// <param name="column">The zero-based index of the column.</param>
+        /// <param name="column">The zero-based index of the column to sort by.</param>
         /// <returns>The current builder instance to allow fluent method chaining.</returns>
         public SortBuilder<T> OrderByDescending(int column)
         {
@@ -83,7 +85,7 @@
         /// <summary>
         /// Adds a secondary or subsequent sorting rule in ascending order.
         /// </summary>
-        /// <param name="column">The zero-based index of the column.</param>
+        /// <param name="column">The zero-based index of the column to sort by.</param>
         /// <returns>The current builder instance to allow fluent method chaining.</returns>
         public SortBuilder<T> ThenByAscending(int column)
         {
@@ -94,8 +96,8 @@
         /// <summary>
         /// Adds a secondary or subsequent sorting rule in descending order.
         /// </summary>
-        /// <param name="column">The zero-based index of the column.</param>
-        /// <returns>The current sort builder instance to allow fluent method chaining.</returns>
+        /// <param name="column">The zero-based index of the column to sort by.</param>
+        /// <returns>The current builder instance to allow fluent method chaining.</returns>
         public SortBuilder<T> ThenByDescending(int column)
         {
             _directives.Add(new SortDirective(column, SortOrder.Descending));
@@ -117,7 +119,11 @@
         /// <summary>
         /// Sorts a jagged array (<c>T[][]</c>) fluently using high-performance FastSort (IntroSort + zero-allocation comparer).
         /// </summary>
-        public static T[][]? FastSortRows<T>(this T[][] array, Action<SortBuilder<T>> ruleConfigurator)
+        /// <typeparam name="T">The type of elements in the array, must implement IComparable{T}.</typeparam>
+        /// <param name="array">The jagged array to be sorted.</param>
+        /// <param name="ruleConfigurator">The lambda expression configuring sorting rules via SortBuilder.</param>
+        /// <returns>The sorted jagged array, or null if the input was null.</returns>
+        public static T[][]? FastSortRows<T>(this T[][]? array, Action<SortBuilder<T>> ruleConfigurator)
             where T : IComparable<T>
         {
             if (array == null || array.Length <= 1)
@@ -133,7 +139,11 @@
         /// <summary>
         /// Sorts a jagged array (<c>T[][]</c>) fluently using QuickSort with reference pointer swapping.
         /// </summary>
-        public static T[][]? QuickSortRows<T>(this T[][] array, Action<SortBuilder<T>> ruleConfigurator)
+        /// <typeparam name="T">The type of elements in the array, must implement IComparable{T}.</typeparam>
+        /// <param name="array">The jagged array to be sorted.</param>
+        /// <param name="ruleConfigurator">The lambda expression configuring sorting rules via SortBuilder.</param>
+        /// <returns>The sorted jagged array, or null if the input was null.</returns>
+        public static T[][]? QuickSortRows<T>(this T[][]? array, Action<SortBuilder<T>> ruleConfigurator)
             where T : IComparable<T>
         {
             if (array == null || array.Length <= 1)
@@ -149,6 +159,10 @@
         /// <summary>
         /// Sorts a traditional 2D array (<c>T[,]</c>) fluently using QuickSort.
         /// </summary>
+        /// <typeparam name="T">The type of elements in the array, must implement IComparable{T}.</typeparam>
+        /// <param name="array">The 2D rectangular array to be sorted.</param>
+        /// <param name="ruleConfigurator">The lambda expression configuring sorting rules via SortBuilder.</param>
+        /// <returns>The sorted 2D array, or null if the input was null.</returns>
         public static T[,]? QuickSortRows<T>(this T[,] array, Action<SortBuilder<T>> ruleConfigurator)
             where T : IComparable<T>
         {
@@ -165,6 +179,10 @@
         /// <summary>
         /// Sorts a traditional 2D array (<c>T[,]</c>) fluently using SelectionSort.
         /// </summary>
+        /// <typeparam name="T">The type of elements in the array, must implement IComparable{T}.</typeparam>
+        /// <param name="array">The 2D rectangular array to be sorted.</param>
+        /// <param name="ruleConfigurator">The lambda expression configuring sorting rules via SortBuilder.</param>
+        /// <returns>The sorted 2D array, or null if the input was null.</returns>
         public static T[,]? SelectionSortRows<T>(this T[,] array, Action<SortBuilder<T>> ruleConfigurator)
             where T : IComparable<T>
         {
@@ -214,7 +232,7 @@
         /// <summary>
         /// Sorts a jagged array based on multi-column sort directives using a custom QuickSort implementation.
         /// </summary>
-        /// <typeparam name="T">The type of elements in the array.</typeparam>
+        /// <typeparam name="T">The type of elements in the array, must implement IComparable{T}.</typeparam>
         /// <param name="array">The jagged array to sort.</param>
         /// <param name="directives">The sorting rules specifying column index and order.</param>
         public static void QuickSortArray<T>(this T[][] array, params SortDirective[] directives)
@@ -315,9 +333,9 @@
         /// <summary>
         /// Sorts a traditional two-dimensional rectangular array based on sort directives using QuickSort.
         /// </summary>
-        /// <typeparam name="T">The type of elements in the array.</typeparam>
+        /// <typeparam name="T">The type of elements in the array, must implement IComparable{T}.</typeparam>
         /// <param name="array">The 2D array to sort.</param>
-        /// <param name="directives">The sorting directives.</param>
+        /// <param name="directives">The sorting directives specifying column indices and sort orders.</param>
         public static void QuickSortArray<T>(this T[,] array, params SortDirective[] directives)
             where T : IComparable<T>
         {
@@ -425,9 +443,9 @@
         /// <summary>
         /// Sorts a traditional two-dimensional rectangular array using the Selection Sort algorithm.
         /// </summary>
-        /// <typeparam name="T">The type of elements in the array.</typeparam>
+        /// <typeparam name="T">The type of elements in the array, must implement IComparable{T}.</typeparam>
         /// <param name="array">The 2D array to sort.</param>
-        /// <param name="directives">The sorting directives.</param>
+        /// <param name="directives">The sorting directives specifying column indices and sort orders.</param>
         public static void SelectionSortArray<T>(this T[,] array, params SortDirective[] directives)
             where T : IComparable<T>
         {
