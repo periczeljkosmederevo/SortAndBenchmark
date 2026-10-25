@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>SortBenchmarks.Benchmark-20261024-211239</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.15.8, Windows 11 (10.0.26300.9711)
+13th Gen Intel CoreT i7-1360P 2.20GHz, 1 CPU, 16 logical and 12 physical cores
+.NET SDK 10.0.402
+  [Host]     : .NET 10.0.13 (10.0.13, 10.0.1326.50504), X64 RyuJIT x86-64-v3
+  Job-CNUJVU : .NET 10.0.13 (10.0.13, 10.0.1326.50504), X64 RyuJIT x86-64-v3
+</code></pre>
+<pre><code>InvocationCount=1  UnrollFactor=1  
+</code></pre>
+
+<table>
+<thead><tr><th>Method              </th><th>Rows</th><th>Mean     </th><th>Error   </th><th>StdDev  </th><th>Median   </th><th>Ratio</th><th>RatioSD</th><th>Rank</th><th>Gen0</th><th>Allocated</th><th>Alloc Ratio</th>
+</tr>
+</thead><tbody><tr><td>Benchmark_2D_QuickSort</td><td>100</td><td>115.89 &mu;s</td><td>4.258 &mu;s</td><td>12.420 &mu;s</td><td>113.15 &mu;s</td><td>2.89</td><td>0.39</td><td>4</td><td>-</td><td>7176 B</td><td>0.590</td>
+</tr><tr><td>Benchmark_Jagged_QuickSort</td><td>100</td><td>54.67 &mu;s</td><td>1.742 &mu;s</td><td>5.109 &mu;s</td><td>54.10 &mu;s</td><td>1.36</td><td>0.17</td><td>2</td><td>-</td><td>-</td><td>0.000</td>
+</tr><tr><td>Benchmark_FastSort</td><td>100</td><td>60.41 &mu;s</td><td>1.655 &mu;s</td><td>4.801 &mu;s</td><td>60.60 &mu;s</td><td>1.51</td><td>0.17</td><td>3</td><td>-</td><td>88 B</td><td>0.007</td>
+</tr><tr><td>Benchmark_LINQ</td><td>100</td><td>40.40 &mu;s</td><td>1.139 &mu;s</td><td>3.287 &mu;s</td><td>39.95 &mu;s</td><td>1.01</td><td>0.11</td><td>1</td><td>-</td><td>12168 B</td><td>1.000</td>
+</tr><tr><td>Benchmark_2D_QuickSort</td><td>1000</td><td>1,006.69 &mu;s</td><td>147.877 &mu;s</td><td>431.364 &mu;s</td><td>731.50 &mu;s</td><td>2.41</td><td>1.03</td><td>2</td><td>-</td><td>68744 B</td><td>0.673</td>
+</tr><tr><td>Benchmark_Jagged_QuickSort</td><td>1000</td><td>524.06 &mu;s</td><td>69.448 &mu;s</td><td>203.678 &mu;s</td><td>410.10 &mu;s</td><td>1.26</td><td>0.49</td><td>1</td><td>-</td><td>-</td><td>0.000</td>
+</tr><tr><td>Benchmark_FastSort</td><td>1000</td><td>470.35 &mu;s</td><td>56.852 &mu;s</td><td>167.629 &mu;s</td><td>352.45 &mu;s</td><td>1.13</td><td>0.40</td><td>1</td><td>-</td><td>88 B</td><td>0.001</td>
+</tr><tr><td>Benchmark_LINQ</td><td>1000</td><td>417.59 &mu;s</td><td>8.251 &mu;s</td><td>9.502 &mu;s</td><td>415.50 &mu;s</td><td>1.00</td><td>0.03</td><td>1</td><td>-</td><td>102168 B</td><td>1.000</td>
+</tr><tr><td>Benchmark_2D_QuickSort</td><td>10000</td><td>10,149.31 &mu;s</td><td>199.454 &mu;s</td><td>237.436 &mu;s</td><td>10,133.30 &mu;s</td><td>2.35</td><td>0.06</td><td>3</td><td>-</td><td>692432 B</td><td>0.691</td>
+</tr><tr><td>Benchmark_Jagged_QuickSort</td><td>10000</td><td>4,614.19 &mu;s</td><td>91.555 &mu;s</td><td>89.919 &mu;s</td><td>4,607.70 &mu;s</td><td>1.07</td><td>0.02</td><td>2</td><td>-</td><td>-</td><td>0.000</td>
+</tr><tr><td>Benchmark_FastSort</td><td>10000</td><td>4,695.23 &mu;s</td><td>91.197 &mu;s</td><td>89.567 &mu;s</td><td>4,660.90 &mu;s</td><td>1.08</td><td>0.02</td><td>2</td><td>-</td><td>88 B</td><td>0.000</td>
+</tr><tr><td>Benchmark_LINQ</td><td>10000</td><td>4,328.80 &mu;s</td><td>68.681 &mu;s</td><td>60.884 &mu;s</td><td>4,328.80 &mu;s</td><td>1.00</td><td>0.02</td><td>1</td><td>-</td><td>1002168 B</td><td>1.000</td>
+</tr><tr><td>Benchmark_2D_QuickSort</td><td>100000</td><td>187,779.30 &mu;s</td><td>3,727.977 &mu;s</td><td>9,488.892 &mu;s</td><td>186,396.60 &mu;s</td><td>2.54</td><td>0.15</td><td>2</td><td>-</td><td>6924216 B</td><td>0.692</td>
+</tr><tr><td>Benchmark_Jagged_QuickSort</td><td>100000</td><td>75,669.64 &mu;s</td><td>1,511.808 &mu;s</td><td>2,567.166 &mu;s</td><td>75,341.85 &mu;s</td><td>1.02</td><td>0.05</td><td>1</td><td>-</td><td>-</td><td>0.000</td>
+</tr><tr><td>Benchmark_FastSort</td><td>100000</td><td>74,298.62 &mu;s</td><td>1,460.770 &mu;s</td><td>1,999.519 &mu;s</td><td>73,626.60 &mu;s</td><td>1.00</td><td>0.04</td><td>1</td><td>-</td><td>88 B</td><td>0.000</td>
+</tr><tr><td>Benchmark_LINQ</td><td>100000</td><td>74,116.51 &mu;s</td><td>1,448.398 &mu;s</td><td>2,297.313 &mu;s</td><td>74,773.40 &mu;s</td><td>1.00</td><td>0.04</td><td>1</td><td>-</td><td>10002168 B</td><td>1.000</td>
+</tr><tr><td>Benchmark_2D_QuickSort</td><td>500000</td><td>1,646,896.16 &mu;s</td><td>45,810.290 &mu;s</td><td>133,630.774 &mu;s</td><td>1,648,921.35 &mu;s</td><td>3.05</td><td>0.25</td><td>3</td><td>3000.0000</td><td>34650616 B</td><td>0.693</td>
+</tr><tr><td>Benchmark_Jagged_QuickSort</td><td>500000</td><td>608,651.00 &mu;s</td><td>11,884.140 &mu;s</td><td>34,478.047 &mu;s</td><td>612,560.80 &mu;s</td><td>1.13</td><td>0.06</td><td>2</td><td>-</td><td>-</td><td>0.000</td>
+</tr><tr><td>Benchmark_FastSort</td><td>500000</td><td>595,113.19 &mu;s</td><td>11,602.433 &mu;s</td><td>16,264.992 &mu;s</td><td>589,123.90 &mu;s</td><td>1.10</td><td>0.03</td><td>2</td><td>-</td><td>88 B</td><td>0.000</td>
+</tr><tr><td>Benchmark_LINQ</td><td>500000</td><td>539,160.36 &mu;s</td><td>6,715.002 &mu;s</td><td>5,607.331 &mu;s</td><td>538,875.50 &mu;s</td><td>1.00</td><td>0.01</td><td>1</td><td>-</td><td>50002168 B</td><td>1.000</td>
+</tr><tr><td>Benchmark_2D_QuickSort</td><td>1000000</td><td>4,225,739.46 &mu;s</td><td>100,507.544 &mu;s</td><td>285,123.194 &mu;s</td><td>4,181,847.60 &mu;s</td><td>3.37</td><td>0.23</td><td>2</td><td>7000.0000</td><td>69336280 B</td><td>0.693</td>
+</tr><tr><td>Benchmark_Jagged_QuickSort</td><td>1000000</td><td>1,334,138.06 &mu;s</td><td>27,370.187 &mu;s</td><td>80,701.620 &mu;s</td><td>1,332,269.65 &mu;s</td><td>1.06</td><td>0.07</td><td>1</td><td>-</td><td>-</td><td>0.000</td>
+</tr><tr><td>Benchmark_FastSort</td><td>1000000</td><td>1,412,996.83 &mu;s</td><td>17,510.803 &mu;s</td><td>14,622.313 &mu;s</td><td>1,416,142.70 &mu;s</td><td>1.13</td><td>0.02</td><td>1</td><td>-</td><td>88 B</td><td>0.000</td>
+</tr><tr><td>Benchmark_LINQ</td><td>1000000</td><td>1,255,436.79 &mu;s</td><td>24,828.300 &mu;s</td><td>23,224.408 &mu;s</td><td>1,253,861.80 &mu;s</td><td>1.00</td><td>0.03</td><td>1</td><td>-</td><td>100002168 B</td><td>1.000</td>
+</tr></tbody></table>
+</body>
+</html>
