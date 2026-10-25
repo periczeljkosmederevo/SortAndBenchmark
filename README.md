@@ -63,38 +63,58 @@ Sort/
 Integrating multi-column sorting into your own projects is straightforward using extension methods:
 
 ```csharp
-    using Sort;
+    using SortAndBenchmark;
 
-    // 1. Define multi-column sorting directives (e.g., Col 0 ASC, Col 1 DESC, Col 2 ASC)
-    SortDirective[] directives =
-    [
-        new SortDirective(0, SortOrder.Ascending),
-        new SortDirective(1, SortOrder.Descending),
-        new SortDirective(2, SortOrder.Ascending)
-    ];
+// 1. Example with a Jagged Array (T[][])
+        string[][] jaggedTable = 
+        [
+            ["John", "Porter", "1234 Oak Street"],
+            ["John", "Porter", "1891 3rd Street"],
+            ["William", "Patterson", "4534 Virginia Street"]
+        ];
 
-    // 2. Example with a Jagged Array (T[][])
-    string[][] jaggedTable = 
-    [
-        ["John", "Porter", "1234 Oak Street"],
-        ["John", "Porter", "1891 3rd Street"],
-        ["William", "Patterson", "4534 Virginia Street"]
-    ];
+// ---------------------------------------------------------
+// OPTION A: Using the new Fluent API (LINQ-like & Clean)
+// ---------------------------------------------------------
 
-    // Apply high-performance FastSort (IntroSort + zero-allocation struct comparer)
-    jaggedTable.FastSortArray(directives);
+        jaggedTable.FastSortRows(b => b
+            .OrderBy(0)                 // Default ascending (Col 0)
+            .ThenByDescending(1)        // Descending (Col 1)
+            .ThenByAscending(2)         // Ascending (Col 2)
+        );
 
-    // Or use QuickSort variant on jagged array
-    jaggedTable.QuickSortArray(directives);
+// Or using QuickSort with fluent syntax
 
-    // 3. Example with a traditional 2D Array (T[,])
-    string[,] table2D = new string[2, 3]
-    {
-        { "John", "Porter", "1234 Oak Street" },
-        { "William", "Patterson", "4534 Virginia Street" }
-    };
+        jaggedTable.QuickSortRows(b => b
+            .OrderByAscending(0)
+            .ThenByDescending(1)
+        );
 
-    table2D.QuickSortArray(directives);
+// ---------------------------------------------------------
+// OPTION B: Using Traditional Sort Directives
+// ---------------------------------------------------------
+
+        SortDirective[] directives =
+        [
+            new SortDirective(0, SortOrder.Ascending),
+            new SortDirective(1, SortOrder.Descending),
+            new SortDirective(2, SortOrder.Ascending)
+        ];
+
+        jaggedTable.FastSortArray(directives);
+
+// 2. Example with a traditional 2D Array (T[,])
+
+        string[,] table2D = new string[2, 3]
+        {
+            { "John", "Porter", "1234 Oak Street" },
+            { "William", "Patterson", "4534 Virginia Street" }
+        };
+
+        table2D.QuickSortRows(b => b
+            .OrderBy(0)
+            .ThenByDescending(1)
+        );
 ```
 
 ---
